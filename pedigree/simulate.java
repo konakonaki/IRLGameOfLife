@@ -42,7 +42,7 @@ public class simulate extends AgeModel{
 			//REPRODUCTION
 			if(Sex.F.equals(fondateur.getSex())) { //female
 				
-				Events reprod = new Events(fondateur, 1,  (float)Sim.MIN_MATING_AGE_F+(float)randomWaitingTime(rand, 8));
+				Events reprod = new Events(fondateur, 1,  (float)Sim.MIN_MATING_AGE_F+(float)randomWaitingTime(rand, 1));
 				eventQueue.add(reprod);
 			}
 			population.add(fondateur);
@@ -53,7 +53,7 @@ public class simulate extends AgeModel{
 			{
 			      Events E = eventQueue.poll(); // prochain événement
 			      System.out.println(E.subject.toString());
-			      if(E.time>Tmax) break; // arrêter à Tmax
+			      if(E.time>Tmax) {System.out.println("arrêt à" + E.time);break;} // arrêter à Tmax
 			      if (E.type ==2 )
 			      {
 			    	  population.remove(E.subject);//mort: retiré de la pop.
@@ -86,13 +86,13 @@ public class simulate extends AgeModel{
 		    					  
 		    					  //mort de l'enfant
 		    					  Random rand = new Random();
-		    					  simBaby.setDeathTime((float)a.randomAge(rand));
-		    					  Events death = new Events(simBaby, 2, (float)simBaby.getBirthTime() +(float)simBaby.getDeathTime());
+		    					  simBaby.setDeathTime(E.time+(float)a.randomAge(rand));
+		    					  Events death = new Events(simBaby, 2, E.time+(float)simBaby.getDeathTime());
 		    					  eventQueue.add(death);
 		    					  
 		    					  if(Sex.F.equals(simBaby.getSex())) { //female
 		    							
-		    							Events reprod = new Events(simBaby, 1, E.time+(float)Sim.MIN_MATING_AGE_F+(float)randomWaitingTime(rand, 1));
+		    							Events reprod = new Events(simBaby, 1, (float)0.75 +E.time+(float)Sim.MIN_MATING_AGE_F+(float)randomWaitingTime(rand, 16));
 		    							eventQueue.add(reprod);
 		    					  }
 		    					  
@@ -117,34 +117,31 @@ public class simulate extends AgeModel{
   					System.out.println("fidelité");
   					  //mort de l'enfant
   					  Random rand = new Random();
-  					  simBaby.setDeathTime((float)a.randomAge(rand));
-  					  Events death = new Events(simBaby, 2, (float)simBaby.getBirthTime() +(float)simBaby.getDeathTime());
+  					  simBaby.setDeathTime(E.time +(float)a.randomAge(rand));
+  					  Events death = new Events(simBaby, 2, E.time + (float)simBaby.getBirthTime() +(float)simBaby.getDeathTime());
   					  eventQueue.add(death);
   					  
   					  if(Sex.F.equals(simBaby.getSex())) { //female
   							
-  							Events reprodu = new Events(simBaby, 1, E.time+(float)Sim.MIN_MATING_AGE_F+(float)randomWaitingTime(rand, 1));
+  							Events reprodu = new Events(simBaby, 1, (float)0.75 +E.time+(float)Sim.MIN_MATING_AGE_F+(float)randomWaitingTime(rand, 16));
   							eventQueue.add(reprodu);
   					  }
   					  
   					  //Reproduction of mother
-  					  Events reprod = new Events(E.subject, 1, (E.time + (float)0.75+ (float)randomWaitingTime(rand, 8)));
+  					  Events reprod = new Events(E.subject, 1, (E.time + (float)0.75+ (float)randomWaitingTime(rand, 16)));
   					  eventQueue.add(reprod);
 			    	}
 			      }
 
 			   }
-			if (eventQueue.isEmpty()) {flag =1;}
+			if (eventQueue.isEmpty()) {flag =1; System.out.println("End of EventsQueue");}
 		}
-		System.out.println("End of EventsQueue");
+		
 	}
 	
-
-	
-	
-	public static void main(String[] args) {
+public static void main(String[] args) {
 		
-		simulate.simulateGameOfLifeIRL(20, 2000, (double)0.);
+		simulate.simulateGameOfLifeIRL(5, 2000, (double)0.5);
 	}
 
 }
